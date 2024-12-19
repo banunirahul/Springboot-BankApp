@@ -11,13 +11,13 @@ pipeline{
         stage("Code Build"){
             steps{
                 echo "Starting Code Build stage"
-                echo "docker build -t bank-app ."
+                sh "docker build -t bank-app ."
             }
         }
         stage("Code Deploy"){
             steps{
                 echo "Starting Code Deploy stage"
-                echo "docker compose down && docker compose up -d --build"
+                sh "docker compose down && docker compose up -d --build"
             }
         }
     }

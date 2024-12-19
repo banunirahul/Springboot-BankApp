@@ -5,7 +5,7 @@ pipeline{
         stage("Code clone"){
             steps{
                 echo "Starting Code Clone stage"
-                clone("https://github.com/banunirahul/Springboot-BankApp.git","DevOps")
+                gitClone("https://github.com/banunirahul/Springboot-BankApp.git","DevOps")
             }
         }
         stage("Code Build"){

@@ -7,7 +7,7 @@ services:
       - MYSQL_ROOT_PASSWORD=Test@123
       - MYSQL_DATABASE=BankDB
     volumes:
-      - ./mysql-data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
     networks:
       - bankapp
     healthcheck:
@@ -38,6 +38,9 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-
+      
+volumes:
+  mysql-data:
+  
 networks:
   bankapp:

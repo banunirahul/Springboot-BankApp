@@ -1,87 +1,30 @@
-@Library('Shared') _
-pipeline {
-    agent any
-    
-    environment{
-        SONAR_HOME = tool "Sonar"
-    }
-    
-    parameters {
-        string(name: 'DOCKER_TAG', defaultValue: '', description: 'Setting docker image for latest push')
-    }
-    
-    stages {
-        
-        stage("Workspace cleanup"){
-            steps{
-                script{
-                    cleanWs()
-                }
-            }
-        }
-        
-        stage('Git: Code Checkout') {
+pipeline{
+    agent {label "pre-server"}
+    stages{
+        stage("Fix Permissions") {
             steps {
-                script{
-                    code_checkout("https://github.com/DevMadhup/Springboot-BankApp.git","DevOps")
-                }
+                echo "Fixing permissions"
+                sh 'sudo chmod -R 755 /home/ubuntu/docker/workspace/Bank-app-pipeline/mysql-data'
+                sh 'sudo chown -R $(whoami):$(whoami) /home/ubuntu/docker/workspace/Bank-app-pipeline/mysql-data'
             }
         }
-        
-        stage("Trivy: Filesystem scan"){
+        stage("Code clone"){
             steps{
-                script{
-                    trivy_scan()
-                }
+                echo "Starting Code Clone stage"
+                git url:"https://github.com/banunirahul/Springboot-BankApp.git",branch:"DevOps"
             }
         }
-
-        stage("OWASP: Dependency check"){
+        stage("Code Build"){
             steps{
-                script{
-                    owasp_dependency()
-                }
+                echo "Starting Code Build stage"
+                sh "docker build -t bank-app ."
             }
         }
-        
-        stage("SonarQube: Code Analysis"){
+        stage("Code Deploy"){
             steps{
-                script{
-                    sonarqube_analysis("Sonar","bankapp","bankapp")
-                }
+                echo "Starting Code Deploy stage"
+                sh "docker compose down && docker compose up -d --build"
             }
-        }
-        
-        stage("SonarQube: Code Quality Gates"){
-            steps{
-                script{
-                    sonarqube_code_quality()
-                }
-            }
-        }
-
-        stage("Docker: Build Images"){
-            steps{
-                script{
-                    docker_build("bankapp","${params.DOCKER_TAG}","madhupdevops")
-                }
-            }
-        }
-        
-        stage("Docker: Push to DockerHub"){
-            steps{
-                script{
-                    docker_push("bankapp","${params.DOCKER_TAG}","madhupdevops")
-                }
-            }
-        }
-    }
-    post{
-        success{
-            archiveArtifacts artifacts: '*.xml', followSymlinks: false
-            build job: "BankApp-CD", parameters: [
-                string(name: 'DOCKER_TAG', value: "${params.DOCKER_TAG}")
-            ]
         }
     }
 }

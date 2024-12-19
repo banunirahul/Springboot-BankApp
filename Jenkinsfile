@@ -1,13 +1,6 @@
 pipeline{
     agent {label "pre-server"}
     stages{
-        stage("Fix Permissions") {
-            steps {
-                echo "Fixing permissions"
-                sh 'sudo chmod -R 755 /home/ubuntu/docker/workspace/Bank-app-pipeline/mysql-data'
-                sh 'sudo chown -R $(whoami):$(whoami) /home/ubuntu/docker/workspace/Bank-app-pipeline/mysql-data'
-            }
-        }
         stage("Code clone"){
             steps{
                 echo "Starting Code Clone stage"

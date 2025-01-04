@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bank-app-pvc
+  namespace: bank-app-namespace
+  labels:
+      app: bank-app
+spec:
+  accessModes:
+    - ReadWriteOnce  # Match the PV's access mode
+  resources:
+    requests:
+      storage: 5Gi  # Requested storage size
+  storageClassName: manual  # Match the PV's storage class

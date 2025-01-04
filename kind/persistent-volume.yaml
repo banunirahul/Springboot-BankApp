@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: bank-app-pv
+  namespace: bank-app-namespace
+  labels:
+    app: bank-app
+spec:
+  capacity:
+    storage: 5Gi  # Define the storage size
+  accessModes:
+    - ReadWriteOnce  # Access mode (RWO, RWX, ROX)
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual  # Associate with a StorageClass
+  hostPath:  # HostPath for Kind (local path on the host machine)
+    path: /temp/bankapp-mysql  # Change this to the desired path on your host
+    type: DirectoryOrCreate

@@ -6,7 +6,6 @@ metadata:
   labels:
     app: bank-app
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: bank-app
@@ -24,6 +23,13 @@ spec:
         image: banunirahul03/springboot_bankapp:latest
         ports:
         - containerPort: 8080
+        resources:
+          requests:
+            cpu: 600m
+            memory: 512Mi
+          limits:
+            cpu: 800m
+            memory: 1200Mi
         env:
         - name: SPRING_DATASOURCE_URL
           valueFrom:
@@ -52,3 +58,8 @@ spec:
             port: 8080
           initialDelaySeconds: 15
           periodSeconds: 10
+      tolerations:
+      - key: "prod"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"

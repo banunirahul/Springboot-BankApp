@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: bank-app-namespace
+  name: bank-ext-user
+rules:
+  - apiGroups: [" ","apps","extension"]
+    resources: ["pods", "deployments"]
+    verbs: ["get", "list", "update"]
